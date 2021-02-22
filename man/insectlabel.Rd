@@ -5,8 +5,10 @@
 \title{Generates labels for insect specimens, and add UUIDs within QR codes}
 \usage{
 insectlabel(
-  z = NULL,
-  text = NULL,
+  labeldata = NULL,
+  number = NULL,
+  filename = "insectlabels.pdf",
+  text_order = NULL,
   x = 30,
   y = 8,
   QR = 1,
@@ -19,17 +21,21 @@ insectlabel(
   QRx = 4,
   QRy = 0,
   delim = ";",
-  file = "insect_labels.pdf",
+  prefix = "urn:uuid:",
   width = 8.27,
   height = 11.69,
   qrlevel = 3,
-  exp = FALSE
+  export_table = FALSE
 )
 }
 \arguments{
-\item{z}{an object of class 'dataframe', the first column consisting of intiger values, indicating the number of labels to be plotted for each row. This will usually be a table of collecting event data, or determination data.}
+\item{labeldata}{dataframe, specifying label data, usually associated with collecting-event or determination. Each row should include data for each unique label.}
 
-\item{text}{a list of integers, and/or vector of integers, specifying which data to include in what order. Each element of the list represent one label-line, chronologically ordered. E.g. list(c(1, 2),c(3,4),c(5,6), 7, 8, 9), where 1 is first column of input data, 2 is second etc.}
+\item{number}{intiger vector, indicating the number of labels to be plotted for each row in the dataframe}
+
+\item{filename}{a string specifying the output PDF file name}
+
+\item{text_order}{a list of integers, and/or vector of integers, specifying which data to include in what order. Each element of the list represent one label-line, chronologically ordered. E.g. list(c(1, 2),c(3,4),c(5,6), 7, 8, 9), where 1 is first column of input data, 2 is second etc.}
 
 \item{x}{an integer specifying number of rows of labeles on each page}
 
@@ -55,7 +61,7 @@ insectlabel(
 
 \item{delim}{a string specifying a delimiter between data segments in the QR codes (if more than one)}
 
-\item{file}{a string specifying the output PDF file name}
+\item{prefix}{a string specifying a prefix to the uuid}
 
 \item{width}{a numerical value specifying PDF width (inches)}
 
@@ -63,39 +69,39 @@ insectlabel(
 
 \item{qrlevel}{an integer value between 0 and 3  specifying the QR error correction level}
 
-\item{exp}{a logical value. If TRUE, a data matrix with UUIDs will be exported}
+\item{export_table}{a logical value. If TRUE, a data matrix with UUIDs will be exported}
 }
 \description{
 Generates labels for insect specimens, and add UUIDs within QR codes
 }
 \examples{
 example_input <- data.frame(
-               label_copies = c(20,15,25),
-               col_ID = c("JPL_001", "JPL_002", "JPL_003"),
-               country = c("Norway,", "Norway,", "Norway,"),
-               county = c("Nordland,", "Troms,", "Troms,"),
-               municipality = c("Grane:", "Tromsø:", "Målselv:"),
-               locality1 =c("Auster Vefsna", "Tønsvik", "Dividalen"),
-               locality2 = c("Stilleelva", "Tverrelva", "Kvennelva"),
-               lat = c(65.532188, 69.736644, 68.792052),
-               lon = c(13.728252, 19.178893, 19.695974),
-               habitat = c("River-shore", "River-shore", "River-shore"),
-               method = c("Sweep-net:", "Sweep-net:", "Sweep-net:"),
-               date = c("2018-07-29", "2018-08-01", "2018-08-10"),
-               leg = c("Leg. J. Kjærandsen", "Leg. J.P.Lindemann", "Leg. J.P.Lindemann")
-               )
+           col_ID = c("JPL_001", "JPL_002", "JPL_003"),
+           country = c("Norway,", "Norway,", "Norway,"),
+           county = c("Nordland,", "Troms,", "Troms,"),
+           municipality = c("Grane:", "Tromsø:", "Målselv:"),
+           locality1 =c("Auster Vefsna", "Tønsvik", "Dividalen"),
+           locality2 = c("Stilleelva", "Tverrelva", "Kvennelva"),
+           lat = c(65.532188, 69.736644, 68.792052),
+           lon = c(13.728252, 19.178893, 19.695974),
+           habitat = c("River-shore", "River-shore", "River-shore"),
+           method = c("Sweep-net:", "Sweep-net:", "Sweep-net:"),
+           date = c("2018-07-29", "2018-08-01", "2018-08-10"),
+           leg = c("Leg. J. Kjærandsen", "Leg. J.P.Lindemann", "Leg. J.P.Lindemann")
+           )
 insectlabel(
-               z = example_input,
-               text = list(c(2, 3, 4), c(5, 6), c(7, 8), c(9), c(10, 11), 12),
-               x = 55,
-               y = 15,
-               QR = c(2,1),
-               fontsize = 3.3,
-               linedist = 0.95,
-               tx = 11,
-               ty = -1,
-               QRd = 4,
-               QRx =  4.4,
-               file = "example_labels.pdf"
-               )
+           labeldata = example_input,
+           number = c(20,15,25),
+           filename = "example_labels.pdf",
+           text_order = list(c(2, 3, 4), c(5, 6), c(7, 8), c(9), c(10, 11), 12),
+           x = 55,
+           y = 15,
+           QR = c(2,1),
+           fontsize = 3.3,
+           linedist = 0.95,
+           tx = 11,
+           ty = -1,
+           QRd = 4,
+           QRx =  4.4,
+           )
 }

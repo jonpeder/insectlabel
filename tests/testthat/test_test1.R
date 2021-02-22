@@ -1,6 +1,5 @@
 #test_that("test insectlabel output", {
 #  example_input <- data.frame(
-#                label_copies = c(20,15,25),
 #                col_ID = c("JPL_001", "JPL_002", "JPL_003"),
 #                country = c("Norway,", "Norway,", "Norway,"),
 #                county = c("Nordland,", "Troms,", "Troms,"),
