@@ -83,7 +83,7 @@ insectlabel <- function (labeldata = NULL, number = NULL, filename = "insectlabe
   # Remove spaces after strings in dataset
   label_data <- sapply(label_data, stringr::str_trim)
   # Add UUIDs to dataset
-  label_data <- data.frame(uuid = paste(prefix, uuid::UUIDgenerate(nrow(label_data)), sep = ""), label_data)
+  label_data <- data.frame(uuid = paste(prefix, uuid::UUIDgenerate(n= nrow(label_data)), sep = ""), label_data)
   # Eventually export data with UUIDs
   if (export_table == TRUE) {
     write.table(label_data, "uuid.txt", sep = "\t", row.names = FALSE, quote = FALSE)
