@@ -15,6 +15,7 @@ insectlabel(
   fontsize = 4,
   linedist = 1,
   family = "sans",
+  font = 0,
   tx = 12,
   ty = 0,
   QRd = 4,
@@ -43,11 +44,13 @@ insectlabel(
 
 \item{QR}{a value specifying wether or not to add QR codes, and what data to include. QR code absent (NULL), UUID only (1), or specifiy which data to include in specific order with a single column-number, or a list of column numbers, e.g. c(1,2,4,3,6,7), where 1 is UUID, 2 is first column of input data, 3 is second etc.}
 
-\item{fontsize}{a numerical value specifying font size}
+\item{fontsize}{a numerical value, or a vecotor of numerical values, specifying font size. A vector have to correspond in length to the number of label text-lines}
 
 \item{linedist}{a numerical value specifying line distance}
 
-\item{family}{a string specifying one of the default font families (or other PostScript emulator fonts)}
+\item{family}{a string, or a vector of strings, specifying one of the default font families (or other PostScript emulator fonts). A vector have to correspond in length to the number of label text-lines}
+
+\item{font}{an integer, or a vector of integers, specifying font type of each label line, where 1 is  plain, 2  bold, 3 italic and 4 is bold-italic. A vector have to correspond in length to the number of label text-lines}
 
 \item{tx}{a numerical value specifying text offset on the x plane}
 

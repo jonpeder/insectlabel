@@ -6,8 +6,9 @@
 #' @param y an integer specifying number of columns of labels on each page
 #' @param text_order a list of integers, and/or vector of integers, specifying which data to include in what order. Each element of the list represent one label-line, chronologically ordered. E.g. list(c(1, 2),c(3,4),c(5,6), 7, 8, 9), where 1 is first column of input data, 2 is second etc.
 #' @param QR a value specifying wether or not to add QR codes, and what data to include. QR code absent (NULL), UUID only (1), or specifiy which data to include in specific order with a single column-number, or a list of column numbers, e.g. c(1,2,4,3,6,7), where 1 is UUID, 2 is first column of input data, 3 is second etc.
-#' @param family a string specifying one of the default font families (or other PostScript emulator fonts)
-#' @param fontsize a numerical value specifying font size
+#' @param family a string, or a vector of strings, specifying one of the default font families (or other PostScript emulator fonts). A vector have to correspond in length to the number of label text-lines
+#' @param fontsize a numerical value, or a vecotor of numerical values, specifying font size. A vector have to correspond in length to the number of label text-lines
+#' @param font an integer, or a vector of integers, specifying font type of each label line, where 1 is  plain, 2  bold, 3 italic and 4 is bold-italic. A vector have to correspond in length to the number of label text-lines
 #' @param linedist a numerical value specifying line distance
 #' @param tx a numerical value specifying text offset on the x plane
 #' @param ty a numerical value specifying text offset on the y plane
@@ -59,7 +60,7 @@
 #' @export
 
 insectlabel <- function (labeldata = NULL, number = NULL, filename = "insectlabels.pdf", text_order = NULL, x = 30, y = 8, QR = 1,
-                         fontsize = 4, linedist = 1, family = "sans",tx = 12, ty = 0, QRd = 4,
+                         fontsize = 4, linedist = 1, family = "sans", font = 0, tx = 12, ty = 0, QRd = 4,
                          QRx = 4, QRy = 0, delim = ";", prefix = "urn:uuid:", width = 8.27, height = 11.69, qrlevel = 3,
                          export_table = FALSE){
   if (is.null(labeldata)) {
@@ -118,7 +119,7 @@ insectlabel <- function (labeldata = NULL, number = NULL, filename = "insectlabe
         plot(0, xaxt = 'n', yaxt = 'n', bty = 'n', pch = '', ylab = '', xlab = '')
       }
       # labeltext adds label text to a plot, and controls the text parameters.Input parameters are data (x), text size (y, default 0.3), and the line distance (z, default 1.5).
-      labeltext(x = subset_data[i,2:ncol(subset_data)], text_lines = text_order, y = fontsize/y , z= linedist+(linedist*0.05*(2.26^(QRd-2))), oy = ty, ox = tx/10, f = family)
+      labeltext(x = subset_data[i,2:ncol(subset_data)], text_lines = text_order, y = fontsize/y , z= linedist+(linedist*0.05*(2.26^(QRd-2))), oy = ty, ox = tx/10, f = family, b = font)
     }
   }
   dev.off()
