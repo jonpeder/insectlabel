@@ -14,7 +14,7 @@ insectlabel(
   QR = 1,
   fontsize = 4,
   linedist = 1,
-  family = "Helvetica",
+  family = "sans",
   tx = 12,
   ty = 0,
   QRd = 4,

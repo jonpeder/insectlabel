@@ -59,7 +59,7 @@
 #' @export
 
 insectlabel <- function (labeldata = NULL, number = NULL, filename = "insectlabels.pdf", text_order = NULL, x = 30, y = 8, QR = 1,
-                         fontsize = 4, linedist = 1, family = "Helvetica",tx = 12, ty = 0, QRd = 4,
+                         fontsize = 4, linedist = 1, family = "sans",tx = 12, ty = 0, QRd = 4,
                          QRx = 4, QRy = 0, delim = ";", prefix = "urn:uuid:", width = 8.27, height = 11.69, qrlevel = 3,
                          export_table = FALSE){
   if (is.null(labeldata)) {
