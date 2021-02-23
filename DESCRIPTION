@@ -1,7 +1,7 @@
 Package: insectlabel
 Type: Package
 Title: Generate labels for insect specimens, with UUIDs printed as QR codes
-Version: 0.1.3
+Version: 0.1.4
 Author: Jon Peder Lindemann
 Maintainer: Jon Peder Lindemann <jonpeder.lindemann@gmail.com>
 Description: Generate labels for insect specimens, with UUIDs printed as QR codes.

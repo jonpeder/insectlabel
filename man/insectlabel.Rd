@@ -5,13 +5,13 @@
 \title{Generates labels for insect specimens, and add UUIDs within QR codes}
 \usage{
 insectlabel(
-  labeldata = NULL,
-  number = NULL,
+  label_df = NULL,
+  n = 1,
   filename = "insectlabels.pdf",
   text_order = NULL,
   x = 30,
   y = 8,
-  QR = 1,
+  QR_data = 1,
   fontsize = 4,
   linedist = 1,
   family = "sans",
@@ -25,14 +25,13 @@ insectlabel(
   prefix = "urn:uuid:",
   width = 8.27,
   height = 11.69,
-  qrlevel = 3,
-  export_table = FALSE
+  qrlevel = 3
 )
 }
 \arguments{
-\item{labeldata}{dataframe, specifying label data, usually associated with collecting-event or determination. Each row should include data for each unique label.}
+\item{label_df}{dataframe, specifying label data, usually associated with collecting-event or determination. Each row should include data for each unique label.}
 
-\item{number}{intiger vector, indicating the number of labels to be plotted for each row in the dataframe}
+\item{n}{intiger vector, indicating the number of labels to be plotted for each row in the dataframe}
 
 \item{filename}{a string specifying the output PDF file name}
 
@@ -42,7 +41,7 @@ insectlabel(
 
 \item{y}{an integer specifying number of columns of labels on each page}
 
-\item{QR}{a value specifying wether or not to add QR codes, and what data to include. QR code absent (NULL), UUID only (1), or specifiy which data to include in specific order with a single column-number, or a list of column numbers, e.g. c(1,2,4,3,6,7), where 1 is UUID, 2 is first column of input data, 3 is second etc.}
+\item{QR_data}{an integer or vector of integers specifying what data to store in QR-codes, where 1 is UUID, 2 is first column of input data, 3 is second etc. E.g. c(1,2,8)}
 
 \item{fontsize}{a numerical value, or a vecotor of numerical values, specifying font size. A vector have to correspond in length to the number of label text-lines}
 
@@ -71,8 +70,6 @@ insectlabel(
 \item{height}{a numerical value specifying the PDF height (inches)}
 
 \item{qrlevel}{an integer value between 0 and 3  specifying the QR error correction level}
-
-\item{export_table}{a logical value. If TRUE, a data matrix with UUIDs will be exported}
 }
 \description{
 Generates labels for insect specimens, and add UUIDs within QR codes
@@ -93,13 +90,13 @@ example_input <- data.frame(
            leg = c("Leg. J. Kjærandsen", "Leg. J.P.Lindemann", "Leg. J.P.Lindemann")
            )
 insectlabel(
-           labeldata = example_input,
-           number = c(20,15,25),
+           label_df = example_input,
+           n = c(20,15,25),
            filename = "example_labels.pdf",
            text_order = list(c(2, 3, 4), c(5, 6), c(7, 8), c(9), c(10, 11), 12),
            x = 55,
            y = 15,
-           QR = c(2,1),
+           QR_data = c(2,1),
            fontsize = 3.3,
            linedist = 0.95,
            tx = 11,

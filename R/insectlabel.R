@@ -1,11 +1,11 @@
 #' Generates labels for insect specimens, and add UUIDs within QR codes
-#' @param labeldata dataframe, specifying label data, usually associated with collecting-event or determination. Each row should include data for each unique label.
-#' @param number intiger vector, indicating the number of labels to be plotted for each row in the dataframe
+#' @param label_df dataframe, specifying label data, usually associated with collecting-event or determination. Each row should include data for each unique label.
+#' @param n intiger vector, indicating the number of labels to be plotted for each row in the dataframe
 #' @param filename a string specifying the output PDF file name
 #' @param x an integer specifying number of rows of labeles on each page
 #' @param y an integer specifying number of columns of labels on each page
 #' @param text_order a list of integers, and/or vector of integers, specifying which data to include in what order. Each element of the list represent one label-line, chronologically ordered. E.g. list(c(1, 2),c(3,4),c(5,6), 7, 8, 9), where 1 is first column of input data, 2 is second etc.
-#' @param QR a value specifying wether or not to add QR codes, and what data to include. QR code absent (NULL), UUID only (1), or specifiy which data to include in specific order with a single column-number, or a list of column numbers, e.g. c(1,2,4,3,6,7), where 1 is UUID, 2 is first column of input data, 3 is second etc.
+#' @param QR_data an integer or vector of integers specifying what data to store in QR-codes, where 1 is UUID, 2 is first column of input data, 3 is second etc. E.g. c(1,2,8)
 #' @param family a string, or a vector of strings, specifying one of the default font families (or other PostScript emulator fonts). A vector have to correspond in length to the number of label text-lines
 #' @param fontsize a numerical value, or a vecotor of numerical values, specifying font size. A vector have to correspond in length to the number of label text-lines
 #' @param font an integer, or a vector of integers, specifying font type of each label line, where 1 is  plain, 2  bold, 3 italic and 4 is bold-italic. A vector have to correspond in length to the number of label text-lines
@@ -20,7 +20,6 @@
 #' @param prefix a string specifying a prefix to the uuid
 #' @param width a numerical value specifying PDF width (inches)
 #' @param height a numerical value specifying the PDF height (inches)
-#' @param export_table a logical value. If TRUE, a data matrix with UUIDs will be exported
 #' @examples example_input <- data.frame(
 #' @examples            col_ID = c("JPL_001", "JPL_002", "JPL_003"),
 #' @examples            country = c("Norway,", "Norway,", "Norway,"),
@@ -36,13 +35,13 @@
 #' @examples            leg = c("Leg. J. Kjærandsen", "Leg. J.P.Lindemann", "Leg. J.P.Lindemann")
 #' @examples            )
 #' @examples insectlabel(
-#' @examples            labeldata = example_input,
-#' @examples            number = c(20,15,25),
+#' @examples            label_df = example_input,
+#' @examples            n = c(20,15,25),
 #' @examples            filename = "example_labels.pdf",
 #' @examples            text_order = list(c(2, 3, 4), c(5, 6), c(7, 8), c(9), c(10, 11), 12),
 #' @examples            x = 55,
 #' @examples            y = 15,
-#' @examples            QR = c(2,1),
+#' @examples            QR_data = c(2,1),
 #' @examples            fontsize = 3.3,
 #' @examples            linedist = 0.95,
 #' @examples            tx = 11,
@@ -59,67 +58,51 @@
 #' @importFrom qrencoder qrencode_raw
 #' @export
 
-insectlabel <- function (labeldata = NULL, number = NULL, filename = "insectlabels.pdf", text_order = NULL, x = 30, y = 8, QR = 1,
+insectlabel <- function (label_df = NULL, n = 1, filename = "insectlabels.pdf", text_order = NULL, x = 30, y = 8, QR_data = 1,
                          fontsize = 4, linedist = 1, family = "sans", font = 0, tx = 12, ty = 0, QRd = 4,
-                         QRx = 4, QRy = 0, delim = ";", prefix = "urn:uuid:", width = 8.27, height = 11.69, qrlevel = 3,
-                         export_table = FALSE){
-  if (is.null(labeldata)) {
+                         QRx = 4, QRy = 0, delim = ";", prefix = "urn:uuid:", width = 8.27, height = 11.69, qrlevel = 3
+                         ){
+  if (is.null(label_df)) {
     stop("ERROR: Data not specified")
-  }
-  if (is.null(number)){
-    stop("ERROR: Number of labels to be printed not specified ")
   }
   if (is.null(text_order)) {
     stop("Label text order (text_order) not specified")
   }
   # Open pdf handle
   pdf(file = filename, width = width, height = height)
-  # Multiply each row in input data by the corresponding number in column 1
-  label_data <- NULL
-  for (i in 1:nrow(labeldata)) {
-    for (t in 1:number[i]) {
-      label_data <- rbind(label_data, labeldata[i,])
-    }
-  }
   # Remove spaces after strings in dataset
-  label_data <- sapply(label_data, stringr::str_trim)
+  label_df <- sapply(label_df, stringr::str_trim)
+  # Multiply each row in input data by the corresponding number in column 1
+  label_df <- multirows(label_df, n)
   # Add UUIDs to dataset
-  label_data <- data.frame(uuid = paste(prefix, uuid::UUIDgenerate(n= nrow(label_data)), sep = ""), label_data)
-  # Eventually export data with UUIDs
-  if (export_table == TRUE) {
-    write.table(label_data, "uuid.txt", sep = "\t", row.names = FALSE, quote = FALSE)
-  }
-  # Divide dataset into subsets in a list, where each subset includes the number of rows corresponding to the labels fitting on each page.
-  data_table <- subsetdata(as.data.frame(label_data, stringsAsFactors = FALSE), x*y)
+  label_df <- data.frame(uuid = paste(prefix, uuid::UUIDgenerate(n= nrow(label_df)), sep = ""), label_df)
+  # Create subsets of label-data to be plotted on each separate page. Add subsets to a list.
+  label_list <- subsetdata(label_df, x*y)
   # Loop over each subset in the table
-  for (i in data_table){
-    subset_data <- i
+  for (i in label_list){
+    label_subset <- i
     # Data will be included in QR codes according to if statements.
     # Do not concatenate any cells
-    if (ncell(QR) == 1){
-      qr_df <- subset_data[,QR[1]]
+    if (ncell(QR_data) == 1){
+      qr_df <- label_subset[,QR_data[1]]
     }
-    # Concatenate specified cells on each row, according to QR variable
-    if (ncell(QR) > 1){
-      qr_df <- subset_data[,QR[1]]
-      for (i in 1:(length(QR)-1)) {
-        qr_df <- paste(qr_df, subset_data[,QR[i+1]], sep = delim)
+    # Concatenate data to be stored in QR-codes, and add to new dataframe
+    if (ncell(QR_data) > 1){
+      qr_df <- label_subset[,QR_data[1]]
+      for (i in 2:(length(QR_data))) {
+        qr_df <- paste(qr_df, label_subset[,QR_data[i]], sep = delim)
       }
     }
     # Plot text and eventually QR codes. Divide page into x rows and y columns.
     par(mar=c(QRd/y,0,(QRd+QRy)/y,(QRx*10)/y), mfrow = c(x, y))
     # Loop over each row in the subset
-    for (i in 1:nrow(subset_data)){
-      # If QR is not 0, plot QR codes
-      if (sum(QR) != 0){
-        qr_temp <- qrencode_raw(qr_df[i], version = 0L, level = qrlevel, hint = 2L, caseinsensitive = 1L)
-        image(qr_temp, asp=1, col=c("white", "black"), axes=FALSE, xlab="", ylab="")
-        # If QR is 0, plot only text
-      } else {
-        plot(0, xaxt = 'n', yaxt = 'n', bty = 'n', pch = '', ylab = '', xlab = '')
-      }
-      # labeltext adds label text to a plot, and controls the text parameters.Input parameters are data (x), text size (y, default 0.3), and the line distance (z, default 1.5).
-      labeltext(x = subset_data[i,2:ncol(subset_data)], text_lines = text_order, y = fontsize/y , z= linedist+(linedist*0.05*(2.26^(QRd-2))), oy = ty, ox = tx/10, f = family, b = font)
+    for (i in 1:nrow(label_subset)){
+      # Encode QR-codes
+      qr_temp <- qrencode_raw(qr_df[i], version = 0L, level = qrlevel, hint = 2L, caseinsensitive = 1L)
+      # Plot QR-codes
+      image(qr_temp, asp=1, col=c("white", "black"), axes=FALSE, xlab="", ylab="")
+      # Add label-text
+      labeltext(x = label_subset[i,2:ncol(label_subset)], text_lines = text_order, y = fontsize/y , z= linedist+(linedist*0.05*(2.26^(QRd-2))), oy = ty, ox = tx/10, f = family, b = font)
     }
   }
   dev.off()
