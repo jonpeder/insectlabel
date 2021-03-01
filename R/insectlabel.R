@@ -17,7 +17,6 @@
 #' @param QRy a numerical value specifying QR code offset on the y plane
 #' @param qrlevel an integer value between 0 and 3  specifying the QR error correction level
 #' @param delim a string specifying a delimiter between data segments in the QR codes (if more than one)
-#' @param prefix a string specifying a prefix to the uuid
 #' @param width a numerical value specifying PDF width (inches)
 #' @param height a numerical value specifying the PDF height (inches)
 #' @examples example_input <- data.frame(
@@ -60,7 +59,7 @@
 
 insectlabel <- function (label_df = NULL, n = 1, filename = "insectlabels.pdf", text_order = NULL, x = 30, y = 8, QR_data = 1,
                          fontsize = 4, linedist = 1, family = "sans", font = 0, tx = 12, ty = 0, QRd = 4,
-                         QRx = 4, QRy = 0, delim = ";", prefix = "urn:uuid:", width = 8.27, height = 11.69, qrlevel = 3
+                         QRx = 4, QRy = 0, delim = ";", width = 8.27, height = 11.69, qrlevel = 3
                          ){
   if (is.null(label_df)) {
     stop("ERROR: Data not specified")
@@ -75,7 +74,7 @@ insectlabel <- function (label_df = NULL, n = 1, filename = "insectlabels.pdf", 
   # Multiply each row in input data by the corresponding number in column 1
   label_df <- multirows(label_df, n)
   # Add UUIDs to dataset
-  label_df <- data.frame(uuid = paste(prefix, uuid::UUIDgenerate(n= nrow(label_df)), sep = ""), label_df)
+  label_df <- data.frame(uuid = uuid::UUIDgenerate(n= nrow(label_df)), label_df)
   # Create subsets of label-data to be plotted on each separate page. Add subsets to a list.
   label_list <- subsetdata(label_df, x*y)
   # Loop over each subset in the table

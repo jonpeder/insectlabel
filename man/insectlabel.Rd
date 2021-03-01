@@ -22,7 +22,6 @@ insectlabel(
   QRx = 4,
   QRy = 0,
   delim = ";",
-  prefix = "urn:uuid:",
   width = 8.27,
   height = 11.69,
   qrlevel = 3
@@ -62,8 +61,6 @@ insectlabel(
 \item{QRy}{a numerical value specifying QR code offset on the y plane}
 
 \item{delim}{a string specifying a delimiter between data segments in the QR codes (if more than one)}
-
-\item{prefix}{a string specifying a prefix to the uuid}
 
 \item{width}{a numerical value specifying PDF width (inches)}
 
