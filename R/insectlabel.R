@@ -62,7 +62,7 @@ insectlabel <- function (label_df = NULL, n = 1, filename = "insectlabels.pdf", 
                          QRx = 4, QRy = 0, delim = ";", width = 8.27, height = 11.69, qrlevel = 3
                          ){
   if (is.null(label_df)) {
-    stop("ERROR: Data not specified")
+    stop("ERROR: Data (label_df) not specified")
   }
   if (is.null(text_order)) {
     stop("Label text order (text_order) not specified")
@@ -70,11 +70,11 @@ insectlabel <- function (label_df = NULL, n = 1, filename = "insectlabels.pdf", 
   # Open pdf handle
   pdf(file = filename, width = width, height = height)
   # Remove spaces after strings in dataset
-  label_df <- sapply(label_df, stringr::str_trim)
+  #label_df <- sapply(label_df, stringr::str_trim)
   # Multiply each row in input data by the corresponding number in column 1
   label_df <- multirows(label_df, n)
   # Add UUIDs to dataset
-  label_df <- data.frame(uuid = uuid::UUIDgenerate(n= nrow(label_df)), label_df)
+  label_df <- data.frame(uuid = uuid::UUIDgenerate(n = nrow(label_df)), label_df)
   # Create subsets of label-data to be plotted on each separate page. Add subsets to a list.
   label_list <- subsetdata(label_df, x*y)
   # Loop over each subset in the table
